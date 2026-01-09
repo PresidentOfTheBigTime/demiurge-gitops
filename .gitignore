@@ -1,0 +1,12 @@
+# Secrets
+*.key
+*.pem
+kubeconfig
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
