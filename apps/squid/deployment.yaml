@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squid
+  namespace: squid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid
+  template:
+    metadata:
+      labels:
+        app: squid
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-c3
+      initContainers:
+        - name: init-cache
+          image: busybox:1.36
+          command: ['sh', '-c', 'chown -R 13:13 /var/spool/squid && chmod 750 /var/spool/squid']
+          volumeMounts:
+            - name: cache
+              mountPath: /var/spool/squid
+      containers:
+        - name: squid
+          image: ubuntu/squid:latest
+          ports:
+            - containerPort: 3128
+          volumeMounts:
+            - name: config
+              mountPath: /etc/squid/squid.conf
+              subPath: squid.conf
+            - name: cache
+              mountPath: /var/spool/squid
+            - name: logs
+              mountPath: /var/log/squid
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      volumes:
+        - name: config
+          configMap:
+            name: squid-config
+        - name: cache
+          hostPath:
+            path: /mnt/squid-cache
+            type: Directory
+        - name: logs
+          emptyDir: {}

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squid-config
+  namespace: squid
+data:
+  squid.conf: |
+    http_port 3128
+    cache_dir ufs /var/spool/squid 140000 16 256
+    cache_mem 512 MB
+    maximum_object_size 4 GB
+    maximum_object_size_in_memory 10 MB
+    range_offset_limit -1
+    quick_abort_min -1
+    
+    # Aggressive caching for packages
+    refresh_pattern -i \.deb$ 129600 100% 129600 override-expire
+    refresh_pattern -i \.udeb$ 129600 100% 129600 override-expire
+    refresh_pattern -i Packages\.gz$ 129600 100% 129600 override-expire
+    refresh_pattern -i Release$ 129600 100% 129600 override-expire
+    refresh_pattern -i \.tar\.gz$ 129600 100% 129600 override-expire
+    refresh_pattern ^ftp: 1440 20% 10080
+    refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
+    refresh_pattern . 1440 20% 10080
+    
+    # Allow local network + Tailscale
+    acl localnet src 192.168.0.0/24
+    acl localnet src 100.64.0.0/10
+    acl SSL_ports port 443
+    acl Safe_ports port 80
+    acl Safe_ports port 443
+    acl Safe_ports port 1025-65535
+    
+    http_access allow localnet
+    http_access deny all
+    
+    access_log daemon:/var/log/squid/access.log squid
+    cache_log /var/log/squid/cache.log
+    visible_hostname squid.demiurge.local
