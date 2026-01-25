@@ -5,6 +5,7 @@ metadata:
   namespace: squid
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   selector:
     app: squid
   ports:
