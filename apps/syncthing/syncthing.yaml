@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-config
+  namespace: syncthing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-data
+  namespace: syncthing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncthing
+  namespace: syncthing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: syncthing
+  template:
+    metadata:
+      labels:
+        app: syncthing
+    spec:
+      containers:
+      - name: syncthing
+        image: syncthing/syncthing:latest
+        ports:
+        - containerPort: 8384
+          name: web
+        - containerPort: 22000
+          name: sync-tcp
+        - containerPort: 22000
+          protocol: UDP
+          name: sync-udp
+        - containerPort: 21027
+          protocol: UDP
+          name: discovery
+        volumeMounts:
+        - name: config
+          mountPath: /var/syncthing/config
+        - name: data
+          mountPath: /var/syncthing/data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: syncthing-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: syncthing-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing
+  namespace: syncthing
+spec:
+  selector:
+    app: syncthing
+  ports:
+  - port: 8384
+    targetPort: 8384
+    name: web
+  - port: 22000
+    targetPort: 22000
+    name: sync-tcp
+  - port: 22000
+    targetPort: 22000
+    protocol: UDP
+    name: sync-udp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing-sync
+  namespace: syncthing
+spec:
+  type: LoadBalancer
+  selector:
+    app: syncthing
+  ports:
+  - port: 22000
+    targetPort: 22000
+    name: sync-tcp
+  - port: 22000
+    targetPort: 22000
+    protocol: UDP
+    name: sync-udp
+  - port: 21027
+    targetPort: 21027
+    protocol: UDP
+    name: discovery
