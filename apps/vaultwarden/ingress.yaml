@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vaultwarden
+  namespace: vaultwarden
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: vaultwarden.home.arpa
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vaultwarden
+            port:
+              number: 80
+      - path: /notifications/hub
+        pathType: Prefix
+        backend:
+          service:
+            name: vaultwarden
+            port:
+              number: 3012
+  tls:
+  - hosts:
+    - vaultwarden.home.arpa
+    secretName: vaultwarden-tls
