@@ -4,11 +4,11 @@ metadata:
   name: vaultwarden
   namespace: vaultwarden
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   rules:
-  - host: vaultwarden.home.arpa
+  - host: vaultwarden.massivehog.win
     http:
       paths:
       - path: /
@@ -27,5 +27,5 @@ spec:
               number: 3012
   tls:
   - hosts:
-    - vaultwarden.home.arpa
+    - vaultwarden.massivehog.win
     secretName: vaultwarden-tls
