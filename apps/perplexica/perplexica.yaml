@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: perplexica-data
+  namespace: perplexica
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perplexica
+  namespace: perplexica
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perplexica
+  template:
+    metadata:
+      labels:
+        app: perplexica
+    spec:
+      containers:
+      - name: perplexica
+        image: itzcrazykns1337/perplexica:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: SEARXNG_API_URL
+          value: "http://searxng:8080"
+        - name: OLLAMA_API_URL
+          value: "http://ollama.ollama.svc.cluster.local:11434"
+        volumeMounts:
+        - name: data
+          mountPath: /home/perplexica/data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: perplexica-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perplexica
+  namespace: perplexica
+spec:
+  selector:
+    app: perplexica
+  ports:
+  - port: 3000
+    targetPort: 3000
