@@ -1,4 +1,24 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: perplexica-config
+  namespace: perplexica
+data:
+  config.toml: |
+    [GENERAL]
+    PORT = 3000
+    SIMILARITY_MEASURE = "cosine"
+
+    [API_KEYS]
+    OPENAI = ""
+    GROQ = ""
+    ANTHROPIC = ""
+
+    [API_ENDPOINTS]
+    SEARXNG = "http://searxng:8080"
+    OLLAMA = "http://ollama.ollama.svc.cluster.local:11434"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: perplexica-data
@@ -31,18 +51,19 @@ spec:
         image: itzcrazykns1337/perplexica:latest
         ports:
         - containerPort: 3000
-        env:
-        - name: SEARXNG_API_URL
-          value: "http://searxng:8080"
-        - name: OLLAMA_API_URL
-          value: "http://ollama.ollama.svc.cluster.local:11434"
         volumeMounts:
         - name: data
           mountPath: /home/perplexica/data
+        - name: config
+          mountPath: /home/perplexica/config.toml
+          subPath: config.toml
       volumes:
       - name: data
         persistentVolumeClaim:
           claimName: perplexica-data
+      - name: config
+        configMap:
+          name: perplexica-config
 ---
 apiVersion: v1
 kind: Service
