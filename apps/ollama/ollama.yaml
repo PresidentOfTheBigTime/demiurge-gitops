@@ -41,9 +41,8 @@ spec:
             memory: "2Gi"
             cpu: "1000m"
           limits:
-            memory: "16Gi"
+            memory: "32Gi"
             cpu: "8000m"
-            nvidia.com/gpu: "1"
       volumes:
       - name: models
         persistentVolumeClaim:
