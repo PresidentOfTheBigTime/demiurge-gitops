@@ -26,9 +26,13 @@ spec:
       labels:
         app: vikunja
     spec:
+      securityContext:
+        fsGroup: 0
       containers:
       - name: vikunja
         image: vikunja/vikunja:latest
+        securityContext:
+          runAsUser: 0
         env:
         - name: VIKUNJA_DATABASE_TYPE
           value: postgres
