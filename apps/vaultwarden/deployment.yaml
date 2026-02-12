@@ -18,7 +18,7 @@ spec:
         image: vaultwarden/server:latest
         env:
         - name: DOMAIN
-          value: https://vaultwarden.home.arpa
+          value: https://vaultwarden.massivehog.win
         - name: SIGNUPS_ALLOWED
           value: "false"
         - name: WEBSOCKET_ENABLED
