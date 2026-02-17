@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "kubernetes": {
+    "fileMatch": ["apps/.+\\.yaml$"]
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ],
+  "schedule": ["every weekend"]
+}
