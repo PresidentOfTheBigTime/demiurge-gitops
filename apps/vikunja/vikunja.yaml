@@ -41,7 +41,10 @@ spec:
         - name: VIKUNJA_DATABASE_USER
           value: vikunja
         - name: VIKUNJA_DATABASE_PASSWORD
-          value: changeme123
+          valueFrom:
+            secretKeyRef:
+              name: vikunja-db-secrets
+              key: POSTGRES_PASSWORD
         - name: VIKUNJA_DATABASE_DATABASE
           value: vikunja
         - name: VIKUNJA_SERVICE_PUBLICURL

@@ -35,7 +35,10 @@ spec:
         - name: POSTGRES_USER
           value: vikunja
         - name: POSTGRES_PASSWORD
-          value: changeme123
+          valueFrom:
+            secretKeyRef:
+              name: vikunja-db-secrets
+              key: POSTGRES_PASSWORD
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         ports:
