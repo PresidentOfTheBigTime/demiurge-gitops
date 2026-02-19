@@ -1,0 +1,1 @@
+- dns2 HA with keepalived planned

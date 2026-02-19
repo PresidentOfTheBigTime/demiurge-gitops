@@ -98,6 +98,10 @@ Installed via apt on every k3s VM (host-level, not in-cluster operator).
 
 Tailnet: carp-barb.ts.net
 
+- Pi-hole is Tailnet DNS server (set in Tailscale admin console)
+- Pi-hole resolves *.massivehog.win → 192.168.0.241 (ingress)
+
+
 **Note:** `--accept-routes` is currently false on k3s nodes, meaning they ignore subnet routes from dns1. This is a future fix — not currently breaking anything but would allow using Pi-hole DNS over Tailscale when remote.
 
 Each node authenticates individually via `tailscale up` during bootstrap. Auth keys can be pre-generated from the Tailscale admin console for unattended setup.
