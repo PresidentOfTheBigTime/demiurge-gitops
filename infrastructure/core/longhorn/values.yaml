@@ -19,7 +19,7 @@ defaultSettings:
   # IMPORTANT: This should be 2 for a 3-node cluster.
   # Currently set to 1 which means NO replication - a node failure loses data.
   # Change to 2 when ready to enable cross-node redundancy.
-  defaultReplicaCount: 1
+  defaultReplicaCount: 2
 
 persistence:
-  defaultClassReplicaCount: 1
+  defaultClassReplicaCount: 2
