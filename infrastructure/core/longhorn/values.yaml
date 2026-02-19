@@ -1,0 +1,25 @@
+# Longhorn Helm Values
+# Installed via Rancher Marketplace (chart: longhorn-108.2.0+up1.10.1, app: v1.10.1)
+# Repo: Built into Rancher
+#
+# To install manually:
+#   helm repo add longhorn https://charts.longhorn.io
+#   helm install longhorn longhorn/longhorn \
+#     --namespace longhorn-system --create-namespace \
+#     -f infrastructure/core/longhorn/values.yaml
+#
+# WARNING: Current replicaCount is 1 (no redundancy).
+# Once confident in cluster stability, change to 2 for cross-node replication.
+
+csi:
+  kubeletRootDir: /var/lib/kubelet
+
+defaultSettings:
+  defaultDataPath: /var/lib/longhorn
+  # IMPORTANT: This should be 2 for a 3-node cluster.
+  # Currently set to 1 which means NO replication - a node failure loses data.
+  # Change to 2 when ready to enable cross-node redundancy.
+  defaultReplicaCount: 1
+
+persistence:
+  defaultClassReplicaCount: 1
