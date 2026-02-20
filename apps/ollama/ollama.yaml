@@ -28,8 +28,16 @@ spec:
       labels:
         app: ollama
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-c3
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - k3s-c3
       containers:
       - name: ollama
         image: ollama/ollama:latest
